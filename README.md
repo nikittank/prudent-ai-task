@@ -27,7 +27,7 @@ Output of 5 examples mentioned
 
 
 
-# Task 2 - Bank Statement Parser (Gemini)
+# Task 2 - Bank Statement Parser
 
 ## Overview
 
@@ -46,7 +46,7 @@ The goal is to simplify financial data extraction and generate meaningful insigh
 * Generates **financial insights** from extracted data using Gemini
 * Handles scanned or rotated documents
 * Includes a **test mode** for running without real API calls
-* Privacy-friendly — no files or sensitive data are stored after processing
+* Privacy-friendly - no files or sensitive data are stored after processing
 
 ---
 
