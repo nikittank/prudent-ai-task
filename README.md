@@ -103,51 +103,16 @@ This returns a dictionary containing three main keys:
 
 ## Sample Output
 
-```json
-{
-  "fields": {
-    "fields": {
-      "bank_name": "State Bank of India",
-      "account_holder_name": "Mr. HEMANT S SHARMA",
-      "account_number_masked": "********9272",
-      "statement_month": "2025-09",
-      "account_type": "Savings",
-      "currency": "INR"
-    },
-    "summary": {
-      "opening_balance": 42000.0,
-      "closing_balance": 38500.0,
-      "total_credits": 30000.0,
-      "total_debits": 33500.0,
-      "average_daily_balance": 40000.5
-    },
-    "transactions": [
-      {
-        "date": "2025-09-01",
-        "description": "SALARY CREDIT HDFC BANK",
-        "amount": 30000.0,
-        "balance": 72000.0,
-        "category": "CREDIT"
-      },
-      {
-        "date": "2025-09-10",
-        "description": "ATM CASH WITHDRAWAL – SBI MUMBAI",
-        "amount": -33500.0,
-        "balance": 38500.0,
-        "category": "ATM"
-      }
-    ]
-  },
-  "insights": [
-    "Salary of ₹30,000 credited on 1 Sep.",
-    "Single ATM withdrawal of ₹33,500 detected.",
-    "Closing balance stands at ₹38,500 with no overdrafts.",
-    "Healthy cash flow pattern for this month."
-  ]
-}
-```
+<p align="center">
+  <a href="https://github.com/user-attachments/assets/c9d1be51-3d20-49b5-9a5b-c1837081cb33">
+    <img 
+      src="https://github.com/user-attachments/assets/c9d1be51-3d20-49b5-9a5b-c1837081cb33" 
+      alt="Bank Statement Analyzer Interface" 
+      width="785" 
+      style="max-width:100%; height:auto; border-radius:6px;" />
+  </a>
+</p>
 
----
 
 ## Test Mode
 
