@@ -2,8 +2,8 @@ import json, time
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
 
-PROMPT_EXTRACTION_FILE = "prompt_extraction.txt"
-PROMPT_INSIGHTS_FILE = "prompt_insights.txt"
+PROMPT_EXTRACTION_FILE = "prompts/prompt_extraction.txt"
+PROMPT_INSIGHTS_FILE = "prompts/prompt_insights.txt"
 MODEL_TEXT = "gemini-2.5-flash"
 
 def load_prompt_file(path: str) -> str:
