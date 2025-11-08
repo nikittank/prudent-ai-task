@@ -1,6 +1,4 @@
-# Task 1 - Transaction Value Extractor (Regex Capture Challenge)
-
-## Objective
+# Task 1 - Transaction Value Extractor
 
 Extract all valid transaction details from a multiline text log that follow the pattern:
 
@@ -20,7 +18,9 @@ where
 * `amount` → float number, handles commas and decimals
 * `txn_id` → alphanumeric transaction code
 
-If no valid entries exist, return an empty list `[]`.
+If no valid entries exist, return an empty list `[]`. 
+
+Output of 5 examples mentioned
 
 <img width="532" height="327" alt="Task1-ss" src="https://github.com/user-attachments/assets/ea9158d3-df21-46a5-ad97-33f3b7efe2cc" />
 
