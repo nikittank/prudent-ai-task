@@ -23,7 +23,7 @@ api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
     raise RuntimeError("GEMINI_API_KEY NOT FOUND")
 else:
-    print("✅ GEMINI API KEY LOADED")
+    print("GEMINI API KEY LOADED")
 
 client = genai.Client(api_key=api_key)
 
@@ -40,21 +40,42 @@ def extract_text_from_pdf(pdf_path: str) -> str:
 
 def load_file_to_images_or_text(file_path: str) -> Tuple[List[Image.Image], str, bool]:
     """Load file and detect if OCR is needed."""
+    from pdf2image import pdfinfo_from_path  # imported here to avoid top clutter
     file_path = os.path.abspath(file_path)
     is_pdf = file_path.lower().endswith(".pdf")
 
     if is_pdf:
+        # ✅ Step 1: Get total number of pages before extraction
+        try:
+            info = pdfinfo_from_path(file_path)
+            total_pages = int(info.get("Pages", 1))
+        except Exception as e:
+            print(f"⚠️ Could not determine total pages: {e}")
+            total_pages = 1
+
         pdf_text = extract_text_from_pdf(file_path)
         if pdf_text and len(pdf_text.split()) > 10:
-            print("📄 Detected selectable text in PDF — skipping OCR.")
-            return [], pdf_text, False
+            ocr_meta = {
+                "pages": {
+                    "total_pages": total_pages,
+                    "details": [
+                        {
+                            "page": i,
+                            "source": "PDF text",
+                            "rotation_applied": False
+                        }
+                        for i in range(1, total_pages + 1)
+                    ]
+                }
+            }
+            return [], pdf_text, False, ocr_meta
         else:
             print("📸 No selectable text detected — using OCR on scanned PDF.")
             images = convert_from_path(file_path, dpi=300)
-            return images, "", True
+            return images, "", True, None
     else:
         img = Image.open(file_path).convert("RGB")
-        return [img], "", True
+        return [img], "", True, None
 
 
 def process_bank_statement(file_path: str, test_mode: bool = False) -> Dict[str, Any]:
@@ -62,14 +83,12 @@ def process_bank_statement(file_path: str, test_mode: bool = False) -> Dict[str,
     if test_mode:
         return {
             "fields": {
-                "fields": {
-                    "bank_name": "State Bank of India",
-                    "account_holder_name": "Mr. HEMANT S SHARMA",
-                    "account_number_masked": "********9272",
-                    "statement_month": "2025-09",
-                    "account_type": "Savings",
-                    "currency": "INR"
-                },
+                "bank_name": "State Bank of India",
+                "account_holder_name": "Mr. HEMANT S SHARMA",
+                "account_number_masked": "********9272",
+                "statement_month": "2025-09",
+                "account_type": "Savings",
+                "currency": "INR",
                 "summary": {
                     "opening_balance": 42000.00,
                     "closing_balance": 38500.00,
@@ -110,14 +129,27 @@ def process_bank_statement(file_path: str, test_mode: bool = False) -> Dict[str,
         }
 
 
-    images, pdf_text, needs_ocr = load_file_to_images_or_text(file_path)
+
+    result = load_file_to_images_or_text(file_path)
+
+    # Handle both return types
+    if len(result) == 4:
+        images, pdf_text, needs_ocr, pre_meta = result
+    else:
+        images, pdf_text, needs_ocr = result
+        pre_meta = None
 
     if needs_ocr:
         text, ocr_meta = gemini_vision_ocr(images, client)
-        text_source = "OCR (Gemini Vision)"
+        text_source = "OCR Extracted Text"
     else:
-        text, ocr_meta = pdf_text, {"pages": [{"page": 1, "source": "PDF text", "rotation_applied": False}]}
+        text = pdf_text
+        ocr_meta = pre_meta or {
+            "pages": {"total_pages": 1, "details": [{"page": 1, "source": "PDF text", "rotation_applied": False}]}
+        }
         text_source = "PDF Extracted Text"
+
+
 
     print(f"🔍 Using text source: {text_source}")
 
@@ -150,11 +182,17 @@ def process_bank_statement(file_path: str, test_mode: bool = False) -> Dict[str,
     except Exception as e:
         insights = [f"Insight generation failed: {e}"]
 
+    if isinstance(ocr_meta.get("pages"), list):
+        quality_pages = {"total_pages": len(ocr_meta["pages"]), "details": ocr_meta["pages"]}
+    else:
+        quality_pages = ocr_meta["pages"]
+
     quality = {
-        "pages": ocr_meta["pages"],
+        "pages": quality_pages,
         "warnings": warnings,
         "text_source": text_source
     }
+
 
     return {"fields": parsed, "insights": insights, "quality": quality}
 

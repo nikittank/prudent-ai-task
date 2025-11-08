@@ -9,7 +9,7 @@ Schema:
     "account_holder_name": "string|null",
     "account_number_masked": "string|null",  
     "statement_month": "string (YYYY-MM)|null",
-    "account_type": "Checking|Savings|Joint|null",  // (SB = Savings, CA = Checking) in Account Type/Description
+    "account_type": "Checking|Savings|Joint|null",  // (SB = Savings, CA = Checking, Joint) in Account Type/Description and for Joint Check that the Account Holder name have 2 Names
     "currency": "string|null"
   },
   "summary": {

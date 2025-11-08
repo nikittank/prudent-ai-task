@@ -57,16 +57,10 @@ def detect_and_correct_rotation(pil_img: Image.Image) -> Image.Image:
     rotated_pil = Image.fromarray(cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB))
     return rotated_pil
 
-
-def gemini_vision_ocr(
-    images: List[Image.Image],
-    client,
-    model: str = "gemini-2.5-flash-lite"
-) -> Tuple[str, Dict]:
-    # Run OCR using Gemini Vision with rotation correction (in-memory only)
+def gemini_vision_ocr(images: List[Image.Image], client, model: str = "gemini-2.5-flash-lite") -> Tuple[str, Dict]:
     print("USING OCR ")
     pages_text = []
-    meta = {"pages": []}
+    meta = {"pages": {"total_pages": len(images), "details": []}}
 
     for i, img in enumerate(images, start=1):
         try:
@@ -77,13 +71,13 @@ def gemini_vision_ocr(
             response = client.models.generate_content(model=model, contents=[prompt, part])
             text = getattr(response, "text", "") or ""
             pages_text.append(text.strip())
-            meta["pages"].append({
+            meta["pages"]["details"].append({
                 "page": i,
                 "source": model,
                 "rotation_applied": True
             })
         except Exception as e:
-            meta["pages"].append({
+            meta["pages"]["details"].append({
                 "page": i,
                 "error": str(e)
             })
