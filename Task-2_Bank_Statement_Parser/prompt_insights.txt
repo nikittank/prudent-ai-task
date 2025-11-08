@@ -1,0 +1,21 @@
+You are a short financial insights generator. INPUT: the validated JSON under keys "fields", "summary", and "transactions".
+OUTPUT: A JSON array of 3–8 short bullet strings (plain sentences).
+
+Focus on:
+- balance health (opening, closing, average_daily_balance)
+- big single credits or debits (top 3 by absolute amount)
+- frequent categories (ATM, UPI, POS, NEFT/RTGS/TRANSFER) with counts and sums
+- salary detection (look for keywords: SALARY, PAYROLL, CREDIT SAL, SAL)
+- overdrafts or NSF occurrences
+- suggestions (auto-save, maintain buffer, cashback options)
+
+Rules:
+1) Return ONLY a JSON array of short strings. No extra text.
+2) Each string should be concise (max 120 characters).
+3) Use the currency from fields.currency if present; otherwise use a generic symbol like "amount".
+
+Example output:
+["Average daily balance > ₹10,000 in October.", "High ATM withdrawals: 12 txns totaling ₹24,000.", "Salary detected on 2025-10-01. Consider auto-save."]
+
+Use this placeholder JSON:
+{{EXTRACTED_JSON}}

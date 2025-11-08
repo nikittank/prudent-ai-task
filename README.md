@@ -1,0 +1,170 @@
+# Bank Statement Parser (Gemini)
+
+## Overview
+
+This task is a Python-based **bank statement parser** that uses **Google Gemini** (Generative AI) to read and analyze PDF or image-based bank statements.
+It automatically extracts key financial details, transactions, and summary insights into a structured, easy-to-use JSON format.
+
+The goal is to simplify financial data extraction and generate meaningful insights like spending patterns, salary detection, and average balance analysis.
+
+---
+
+## Key Features
+
+* Works with both **PDFs and images**
+* Detects and extracts text automatically (built-in OCR fallback using Gemini Vision)
+* Outputs **structured JSON** containing account info, summaries, and transactions
+* Generates **financial insights** from extracted data using Gemini
+* Handles scanned or rotated documents
+* Includes a **test mode** for running without real API calls
+* Privacy-friendly — no files or sensitive data are stored after processing
+
+---
+
+## Setup and Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/bank-statement-parser.git
+cd bank-statement-parser
+```
+
+### 2. Install dependencies
+
+Make sure you have Python 3.9+ installed.
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Environment setup
+
+Create a `.env` file in the root directory and add your Gemini API key:
+
+```
+GEMINI_API_KEY=your_api_key_here
+```
+
+You can get an API key from your **Google AI Studio** account.
+
+---
+
+## How to Run
+
+### 1. Command Line (CLI)
+
+You can run the parser directly from the terminal:
+
+```bash
+python bank_parser.py "path/to/your/statement.pdf"
+```
+
+### 2. Test Mode
+
+To simulate the output without calling the Gemini API:
+
+```bash
+python bank_parser.py "sample.pdf" --test
+```
+
+This will return a mock structured JSON output that mimics a real response (with two transactions and insights).
+
+---
+
+## Using `process_bank_statement()` in Your Code
+
+You can also import and use the main function in your own project:
+
+```python
+from bank_parser import process_bank_statement
+
+result = process_bank_statement("statement.pdf")
+print(result)
+```
+
+Or run in test mode:
+
+```python
+result = process_bank_statement("sample.pdf", test_mode=True)
+```
+
+This returns a dictionary containing three main keys:
+
+```python
+{
+  "fields": {...},
+  "insights": [...],
+  "quality": {...}
+}
+```
+
+---
+
+## Sample Output
+
+```json
+{
+  "fields": {
+    "fields": {
+      "bank_name": "State Bank of India",
+      "account_holder_name": "Mr. HEMANT S SHARMA",
+      "account_number_masked": "********9272",
+      "statement_month": "2025-09",
+      "account_type": "Savings",
+      "currency": "INR"
+    },
+    "summary": {
+      "opening_balance": 42000.0,
+      "closing_balance": 38500.0,
+      "total_credits": 30000.0,
+      "total_debits": 33500.0,
+      "average_daily_balance": 40000.5
+    },
+    "transactions": [
+      {
+        "date": "2025-09-01",
+        "description": "SALARY CREDIT HDFC BANK",
+        "amount": 30000.0,
+        "balance": 72000.0,
+        "category": "CREDIT"
+      },
+      {
+        "date": "2025-09-10",
+        "description": "ATM CASH WITHDRAWAL – SBI MUMBAI",
+        "amount": -33500.0,
+        "balance": 38500.0,
+        "category": "ATM"
+      }
+    ]
+  },
+  "insights": [
+    "Salary of ₹30,000 credited on 1 Sep.",
+    "Single ATM withdrawal of ₹33,500 detected.",
+    "Closing balance stands at ₹38,500 with no overdrafts.",
+    "Healthy cash flow pattern for this month."
+  ]
+}
+```
+
+---
+
+## Test Mode
+
+When test mode is enabled:
+
+* The program skips all API calls.
+* Returns a predefined, realistic sample JSON.
+* Useful for frontend or UI testing.
+
+---
+
+## Known Limitations
+
+* Complex multi-account statements may not always separate correctly.
+* Very low-quality scans can affect OCR accuracy.
+* Currency detection is basic (₹ / $ / € support included).
+* Long statements may increase Gemini API costs.
+* Requires stable internet connection for Gemini API calls.
+
+---
